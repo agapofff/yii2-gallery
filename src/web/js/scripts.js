@@ -1,80 +1,87 @@
-if (typeof dvizh == "undefined" || !dvizh) {
-    var dvizh = {};
+if (typeof yii2gallery == 'undefined' || !yii2gallery) {
+    var yii2gallery = {};
 }
 
-dvizh.gallery = {
+yii2gallery = {
     init: function () {
         $('.dvizh-gallery-item a.delete').on('click', this.deleteProductImage);
         $('.dvizh-gallery-item a.write').on('click', this.callModal);
         $('.dvizh-gallery img').on('click', this.setMainProductImage);
         $('.noctua-gallery-form').on('submit', this.writeProductImage);
     },
+    
     setMainProductImage: function () {
-        dvizh.gallery._sendData($(this).data('action'), $(this).parents('li').data());
-        $('.dvizh-gallery > li').removeClass('main');
-        $(this).parents('li').addClass('main');
+        var url = $(this).data('action'),
+            data = $(this).parents('.dvizh-gallery-item').data();
+            
+        yii2gallery._sendData(url, data);
+        $('.dvizh-gallery-item').removeClass('main');
+        $(this).parents('.dvizh-gallery-item').addClass('main');
         return false;
     },
 
     writeProductImage: function (event) {
         event.preventDefault();
-        var modalContainer = $('#noctua-gallery-modal');
-        var form = $(this).find('form');
-        var data = form.serialize();
-        var url = form.attr('action');
-        $.ajax({
-            url: url,
-            type: "POST",
-            data: data,
-            success: function (result) {
-                var json = $.parseJSON(result);
-                if (json.result == 'success') {
-                    modalContainer.modal('hide');
-                }
-                else {
-                    alert(json.error);
-                }
-            }
+        
+        var form = $(this).find('form'),
+            url = form.attr('action'),
+            data = form.serialize();
+            
+        $.when(yii2gallery._sendData(url, data)).then(function () {
+            $('#noctua-gallery-modal').modal('hide');
         });
     },
 
     callModal: function (event) {
         event.preventDefault();
-        var modalContainer = $('#noctua-gallery-modal');
-        var url = $(this).data('action');
-        modalContainer.modal({show:true});
-        data = $(this).parents('.dvizh-gallery-item').data();
-        $.ajax({
-            url: url,
-            type: "POST",
-            data: data,
-            success: function (data) {
-                $('.noctua-gallery-form').html(data);
-            }
+
+        var url = $(this).data('action'),
+            data = $(this).parents('.dvizh-gallery-item').data();
+            
+        delete data.sortableItem;
+        
+        $('.noctua-gallery-form').load(url, data, function () {
+            $('#noctua-gallery-modal').modal('show');
         });
     },
+    
     deleteProductImage: function () {
-        if (confirm('realy?')) {
-            dvizh.gallery._sendData($(this).data('action'), $(this).parents('.dvizh-gallery-item').data());
-            $(this).parents('.dvizh-gallery-item').hide('slow');
+        var url = $(this).data('action'),
+            data = $(this).parents('.dvizh-gallery-item').data();
+            
+        if (confirm($(this).data('confirm'))) {
+            yii2gallery._sendData(url, data);
+            $(this).parents('.dvizh-gallery-item').remove();
         }
+        
         return false;
     },
-    _sendData: function (action, data) {
-        return $.post(
-            action,
-            {image: data.image, id: data.id, model: data.model},
-            function (answer) {
-                var json = $.parseJSON(answer);
-                if (json.result == 'success') {
-
-                }
-                else {
-                    alert(json.error);
-                }
+    
+    setSort: function(event, ui){
+        $('.dvizh-gallery').each(function(){
+            var url = $(this).data('action'),
+                data = {
+                    items: []
+                };
+                
+            $(this).find('.dvizh-gallery-item').each(function(){
+                data.items.push(parseFloat($(this).attr('data-image')));
+            });
+            
+            yii2gallery._sendData(url, data);
+        });
+    },
+    
+    _sendData: function (url, data) {
+        return $.post(url, data, function (answer) {
+            var json = $.parseJSON(answer);
+            if (json.result == 'success') {
+                return;
+            } else {
+                alert(json.error);
             }
-        );
+        });
     }
 };
 
-dvizh.gallery.init();
+yii2gallery.init();

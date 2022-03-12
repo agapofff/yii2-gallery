@@ -10,7 +10,7 @@ use dvizh\gallery\models\Image;
 
 class DefaultController extends Controller
 {
-        public function behaviors()
+    public function behaviors()
     {
         return [
             'verbs' => [
@@ -41,9 +41,9 @@ class DefaultController extends Controller
     {
         $model = $this->findImage($id);
         
-        return $this->renderPartial('modalAdd', [
+        return $this->renderAjax('modalAdd', [
             'model' => $model,
-            'post' => yii::$app->request->post(),
+            'post' => Yii::$app->request->post(),
         ]);
     }
 
@@ -55,7 +55,7 @@ class DefaultController extends Controller
             return $this->returnJson('success');
         }
         
-        return $this->returnJson('false', 'Model or Image not found');
+        return $this->returnJson('false', Yii::t('gallery', 'Model or Image not found'));
     }
 
     public function actionDelete($id)
@@ -69,23 +69,40 @@ class DefaultController extends Controller
     public function actionSetmain($id)
     {
         $model = $this->findImage($id);
+        Yii::$app->db->createCommand('UPDATE {{%images}} SET isMain = 0 WHERE itemId = :itemId')
+            ->bindValue(':itemId', $model->itemId)
+            ->execute();
         $model->isMain = 1;
-        $model->save(false);
+        $model->save();
         
+        return $this->returnJson('success');
+    }
+    
+    public function actionSort()
+    {
+        $items = Yii::$app->request->post('items');
+        for ($i = 0; $i < count($items); $i++) {
+            $model = $this->findImage($items[$i]);
+            $model->sort = $i;
+            $model->save();
+        }
         return $this->returnJson('success');
     }
     
     private function returnJson($result, $error = false)
     {
-        $json = ['result' => $result, 'error' => $error];
+        $json = [
+            'result' => $result,
+            'error' => $error
+        ];
         
         return Json::encode($json);
     }
 
     protected function findImage($id)
     {
-        if(!$model = Image::findOne($id)) {
-            throw new \yii\web\NotFoundHttpException("Image dont found.");
+        if (!$model = Image::findOne($id)) {
+            throw new \yii\web\NotFoundHttpException('Image not found');
         }
         
         return $model;

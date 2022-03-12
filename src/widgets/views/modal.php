@@ -1,14 +1,16 @@
 
-<div class="modal fade" id="noctua-gallery-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+<div id="noctua-gallery-modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title"><?=yii::t('gallery', 'Edit image');?></h4>
+                <h4 class="modal-title">
+                    <?= Yii::t('gallery', 'Change') ?>
+                </h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-            <div class="modal-body noctua-gallery-form">
-                ...
-            </div>
+            <div class="modal-body noctua-gallery-form"></div>
         </div>
     </div>
 </div>

@@ -4,7 +4,10 @@ namespace dvizh\gallery\widgets;
 use yii;
 use yii\helpers\Html;
 use yii\helpers\Url;
+use yii\web\JsExpression;
+use yii\jui\Sortable;
 use kartik\file\FileInput;
+use dvizh\gallery\assets\GalleryAsset;
 
 class Gallery extends \yii\base\Widget
 {
@@ -13,19 +16,26 @@ class Gallery extends \yii\base\Widget
     public $fileInputPluginLoading = true;
     public $fileInputPluginOptions = [];
     public $label = null;
+    public $labelClass = 'control-label';
+    public $containerClass = 'row';
+    public $elementClass = 'col-xs-12 col-md-6';
+    public $imageClass = 'img-thumbnail img-fluid';
+    public $deleteButtonText = 'Delete';
+    public $deleteButtonClass = 'btn btn-danger';
+    public $editButtonText = 'Change';
+    public $editButtonClass = 'btn btn-info';
+    public $deleteConfirmText = 'Delete image?';
+    public $hint = null;
+    public $hintClass = null;
  
     public function init()
     {
-        if(!$this->label) {
-            $this->label = yii::t('gallery', 'Image');
-        }
-        
         $view = $this->getView();
-        $view->on($view::EVENT_END_BODY, function($event) {
+        $view->on($view::EVENT_END_BODY, function ($event) {
             echo $this->render('modal');
         });
 
-        \dvizh\gallery\assets\GalleryAsset::register($this->getView());
+        GalleryAsset::register($this->getView());
     }
 
     public function run()
@@ -33,51 +43,76 @@ class Gallery extends \yii\base\Widget
         $model = $this->model;
         $params = [];
         $img = '';
-        $label = '<label class="control-label">'. $this->label .'</label>';
-        $cart = '';
         
-        if($model->getGalleryMode() == 'single') {
-            if($model->hasImage()) {
+        if ($this->label) {
+            $label = Html::tag('label', $this->label, [
+                'class' => $this->labelClass
+            ]);
+        }
+        
+        $gallery = '';
+        
+        if ($model->getGalleryMode() == 'single') {
+            if ($model->hasImage()) {
                 $image = $this->model->getImage();
                 $img = $this->getImagePreview($image);
                 $params = $this->getParams($image->id);
-
             }
 
-            return $label . '<br style="clear: both;" />' . Html::tag('div', $img, $params) . '<br style="clear: both;" />' . $this->getFileInput();
+            return $label . Html::tag('div', $img, $params) . $this->getFileInput();
         }
 
-        if (  $this->model->hasImage() ){
+        if ($this->model->hasImage()) {
             $elements = $this->model->getImages();
-            $cart = Html::ul(
-                $elements,
-                [
-                    'item' => function($item) {
-                        return $this->row($item);
-                    },
-                    'class' => 'dvizh-gallery'
+            $items = [];
+            
+            foreach ($elements as $element) {
+                $items[] = $this->row($element);
+            }
+            
+            $gallery = Sortable::widget([
+                    'items' => $items,
+                    'options' => [
+                        'tag' => 'div',
+                        'class' => 'dvizh-gallery ' . $this->containerClass,
+                        'data' => [
+                            'action' => Url::toRoute(['/gallery/default/sort'])
+                        ]
+                    ],
+                    'itemOptions' => [
+                        'tag' => 'div',
+                        'class' => $this->elementClass,
+                    ],
+                    'clientOptions' => [
+                        'cursor' => 'move',
+                        'update' => new JsExpression('yii2gallery.setSort'),
+                    ],
                 ]);
         }
+        
+        $hint = $this->hint ? Html::tag('div', $this->hint, [
+            'class' => $this->hintClass
+        ]) : null;
 
-        return Html::tag( 'div', $label . $cart . '<br style="clear: both;" />' . $this->getFileInput() );
+        return Html::tag('div', $label . $gallery . $this->getFileInput() . $hint);
     }
 
     private function row($image)
     {
-        if($image instanceof \dvizh\gallery\models\PlaceHolder) {
+        if ($image instanceof \dvizh\gallery\models\PlaceHolder) {
             return '';
         }
 
-        $class = ' dvizh-gallery-row';
+        $class = 'dvizh-gallery-row';
 
-        if($image->isMain) {
+        if ($image->isMain) {
             $class .= ' main';
         }
 
         $liParams = $this->getParams($image->id);
-        $liParams['class'] .=  $class;
+        $liParams['class'] .= $class;
 
-        return Html::tag('li', $this->getImagePreview($image), $liParams);
+        return Html::tag('div', $this->getImagePreview($image), $liParams);
     }
 
     private function getFileInput()
@@ -98,7 +133,7 @@ class Gallery extends \yii\base\Widget
         $model = $this->model;
 
         return  [
-            'class' => 'dvizh-gallery-item',
+            'class' => 'dvizh-gallery-item ',
             'data-model' => $model::className(),
             'data-id' => $model->id,
             'data-image' => $id
@@ -109,11 +144,35 @@ class Gallery extends \yii\base\Widget
     {
         $size = (explode('x', $this->previewSize));
 
-        $delete = Html::a('✖', '#', ['data-action' => Url::toRoute(['/gallery/default/delete', 'id' => $image->id]), 'class' => 'delete']);
-        $write = Html::a('<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>', '#', ['data-action' => Url::toRoute(['/gallery/default/modal', 'id' => $image->id]), 'class' => 'write']);
-        $img = Html::img($image->getUrl($this->previewSize), ['data-action' => Url::toRoute(['/gallery/default/setmain', 'id' => $image->id]), 'width' => $size[0], 'height' => $size[1], 'class' => 'thumb']);
+        $delete = Html::a($this->deleteButtonText, '#', [
+            'data-action' => Url::toRoute([
+                '/gallery/default/delete',
+                'id' => $image->id
+            ]),
+            'data-confirm' => $this->deleteConfirmText,
+            'class' => 'delete ' . $this->deleteButtonClass,
+        ]);
+        
+        $write = Html::a($this->editButtonText, '#', [
+            'data-action' => Url::toRoute([
+                '/gallery/default/modal',
+                'id' => $image->id
+            ]), 
+            'class' => 'write ' . $this->editButtonClass,
+        ]);
+        
+        $img = Html::img($image->getUrl($this->previewSize), [
+            'data-action' => Url::toRoute([
+                '/gallery/default/setmain',
+                'id' => $image->id
+            ]),
+            'width' => $size[0],
+            'height' => $size[1],
+            'class' => $this->imageClass,
+        ]);
+        
         $a = Html::a($img, $image->getUrl());
 
-        return $delete.$write.$a;
+        return $a . $delete . $write;
     }
 }

@@ -4,6 +4,7 @@ namespace dvizh\gallery;
 use Yii;
 use dvizh\gallery\models\PlaceHolder;
 use dvizh\gallery\models\Image;
+use yii\i18n\PhpMessageSource;
 
 class Module extends \yii\base\Module
 {
@@ -17,7 +18,6 @@ class Module extends \yii\base\Module
 
     public function getImage($item, $dirtyAlias)
     {
-
         $params = $data = $this->parseImageAlias($dirtyAlias);
 
         $alias = $params['alias'];
@@ -33,7 +33,8 @@ class Module extends \yii\base\Module
                 'urlAlias' => $alias
             ])
             ->one();
-        if(!$image){
+            
+        if (!$image) {
             return $this->getPlaceHolder();
         }
 
@@ -49,7 +50,6 @@ class Module extends \yii\base\Module
     public function getCachePath()
     {
         return Yii::getAlias($this->imagesCachePath);
-
     }
 
     public function getModelSubDir($model)
@@ -77,10 +77,11 @@ class Module extends \yii\base\Module
         $sizeParts = explode('x', $notParsedSize);
         $part1 = (isset($sizeParts[0]) and $sizeParts[0] != '');
         $part2 = (isset($sizeParts[1]) and $sizeParts[1] != '');
+        
         if ($part1 && $part2) {
-            if (intval($sizeParts[0]) > 0
-                &&
-                intval($sizeParts[1]) > 0
+            if (
+                intval($sizeParts[0]) > 0
+                && intval($sizeParts[1]) > 0
             ) {
                 $size = [
                     'width' => intval($sizeParts[0]),
@@ -124,7 +125,6 @@ class Module extends \yii\base\Module
             $size = null;
         }
 
-
         return ['alias' => $alias, 'size' => $size];
     }
 
@@ -133,32 +133,42 @@ class Module extends \yii\base\Module
     {
         parent::init();
         
-        $app = yii::$app;
+        $app = Yii::$app;
         
-        if (!isset($app->i18n->translations['gallery']) && !isset($app->i18n->translations['gallery*'])) {
-            $app->i18n->translations['gallery'] = [
-                'class' => 'yii\i18n\PhpMessageSource',
-                'basePath' => __DIR__.'/messages',
-                'forceTranslation' => true
+        // if (
+            // !isset($app->i18n->translations['gallery'])
+            // && !isset($app->i18n->translations['gallery*'])
+        // ) {
+            // $app->i18n->translations['gallery'] = [
+                // 'class' => 'yii\i18n\PhpMessageSource',
+                // 'basePath' => __DIR__.'/messages',
+                // 'forceTranslation' => true
+            // ];
+        // }
+        
+        if (!isset($app->get('i18n')->translations['gallery*'])) {
+            $app->get('i18n')->translations['gallery*'] = [
+                'class' => PhpMessageSource::className(),
+                'basePath' => __DIR__ . '/messages',
+                'sourceLanguage' => 'en-US'
             ];
         }
         
-        if (!$this->imagesStorePath
-            or
-            !$this->imagesCachePath
-            or
-            $this->imagesStorePath == '@app'
-            or
-            $this->imagesCachePath == '@app'
-        )
+        if (
+            !$this->imagesStorePath
+            || !$this->imagesCachePath
+            || $this->imagesStorePath == '@app'
+            || $this->imagesCachePath == '@app'
+        ) {
             throw new \Exception('Setup imagesStorePath and imagesCachePath images module properties!!!');
+        }
     }
 
-    public function getPlaceHolder(){
-
-        if($this->placeHolderPath){
+    public function getPlaceHolder()
+    {
+        if ($this->placeHolderPath) {
             return new PlaceHolder();
-        }else{
+        } else {
             return null;
         }
     }

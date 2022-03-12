@@ -29,7 +29,7 @@ class AttachImages extends Behavior
     public function init()
     {
         if (empty($this->uploadsPath)) {
-            $this->uploadsPath = yii::$app->getModule('gallery')->imagesStorePath;
+            $this->uploadsPath = Yii::$app->getModule('gallery')->imagesStorePath;
         }
 
         if ($this->quality > 100) {
@@ -48,10 +48,11 @@ class AttachImages extends Behavior
         ];
     }
 
-    private static function resizePhoto($path, $tmp_name, $quality){
+    private static function resizePhoto($path, $tmp_name, $quality)
+    {
         $type = pathinfo($path, PATHINFO_EXTENSION);
 
-        switch($type){
+        switch ($type) {
             case 'jpeg':
             case 'jpg': {
                 $source = imagecreatefromjpeg($tmp_name);
@@ -64,14 +65,12 @@ class AttachImages extends Behavior
                 $quality = (int) (100 - $quality) / 10 - 1;
                 $result = imagepng($source, $path, $quality);
                 break;
-
             }
             case 'gif': {
                 $source = imagecreatefromgif($tmp_name);
                 $result = imagegif($source, $path);
                 break;
             }
-
             default: return false;
         }
 
@@ -82,7 +81,7 @@ class AttachImages extends Behavior
 
     public function attachImage($absolutePath, $isMain = false)
     {
-        if(!preg_match('#http#', $absolutePath)){
+        if (!preg_match('#http#', $absolutePath)) {
             if (!file_exists($absolutePath)) {
                 throw new \Exception('File not exist! :'.$absolutePath);
             }
@@ -109,7 +108,7 @@ class AttachImages extends Behavior
 
         BaseFileHelper::createDirectory($storePath . DIRECTORY_SEPARATOR . $pictureSubDir, 0775, true);
 
-        if ( $this->quality !== false){
+        if ($this->quality !== false) {
             self::resizePhoto($newAbsolutePath, $absolutePath, $this->quality);
         } else {
             copy($absolutePath, $newAbsolutePath);
@@ -119,9 +118,9 @@ class AttachImages extends Behavior
             throw new \Exception('Cant copy file! ' . $absolutePath . ' to ' . $newAbsolutePath);
         }
 
-        if($this->modelClass === null) {
+        if ($this->modelClass === null) {
             $image = new models\Image;
-        }else{
+        } else {
             $image = new ${$this->modelClass}();
         }
 
@@ -131,7 +130,7 @@ class AttachImages extends Behavior
         $image->urlAlias = $this->getAlias($image);
         $image->gallery_id = $this->galleryId;
 
-        if(!$image->save()){
+        if (!$image->save()) {
             return false;
         }
 
@@ -141,9 +140,15 @@ class AttachImages extends Behavior
             unlink($newAbsolutePath);
             throw new \Exception(array_shift($ar));
         }
+        
         $img = $this->owner->getImage();
 
-        if ( is_object($img) && get_class($img)=='dvizh\gallery\models\PlaceHolder' or $img == null or $isMain) {
+        if (
+            is_object($img) 
+            && get_class($img) == 'dvizh\gallery\models\PlaceHolder' 
+            || $img == null 
+            || $isMain
+        ) {
             $this->setMainImage($image);
         }
 
@@ -186,7 +191,6 @@ class AttachImages extends Behavior
 
         if (preg_match('/' . preg_quote($cachePath, '/') . '/', $dirToRemove)) {
             BaseFileHelper::removeDirectory($dirToRemove);
-
             return true;
         } else {
             return false;
@@ -197,9 +201,12 @@ class AttachImages extends Behavior
     {
         $finder = $this->getImagesFinder();
         $imageQuery = Image::find()->where($finder);
-        $imageQuery->orderBy(['isMain' => SORT_DESC,'sort' => SORT_DESC, 'id' => SORT_ASC]);
+        $imageQuery->orderBy([
+            'sort' => SORT_ASC,
+            'id' => SORT_ASC
+        ]);
         $imageRecords = $imageQuery->all();
-        if(!$imageRecords){
+        if (!$imageRecords) {
             return [$this->getModule()->getPlaceHolder()];
         }
 
@@ -210,10 +217,14 @@ class AttachImages extends Behavior
     {
         $finder = $this->getImagesFinder();
         $imageQuery = Image::find()->where($finder);
-        $imageQuery->orderBy(['isMain' => SORT_DESC,'sort' => SORT_DESC, 'id' => SORT_ASC]);
+        $imageQuery->orderBy([
+            'isMain' => SORT_DESC,
+            'sort' => SORT_DESC,
+            'id' => SORT_ASC
+        ]);
         $img = $imageQuery->one();
 
-        if(!$img){
+        if (!$img) {
             return $this->getModule()->getPlaceHolder();
         }
 
@@ -231,10 +242,13 @@ class AttachImages extends Behavior
 
         $finder = $this->getImagesFinder(['name' => $name]);
         $imageQuery->where($finder);
-        $imageQuery->orderBy(['isMain' => SORT_DESC, 'id' => SORT_ASC]);
+        $imageQuery->orderBy([
+            'isMain' => SORT_DESC,
+            'id' => SORT_ASC
+        ]);
         $img = $imageQuery->one();
 
-        if(!$img){
+        if (!$img) {
             return $this->getModule()->getPlaceHolder();
         }
 
@@ -261,7 +275,7 @@ class AttachImages extends Behavior
         $storePath = $this->getModule()->getStorePath();
         $fileToRemove = $storePath . DIRECTORY_SEPARATOR . $img->filePath;
 
-        if (preg_match('@\.@', $fileToRemove) and is_file($fileToRemove)) {
+        if (preg_match('@\.@', $fileToRemove) && is_file($fileToRemove)) {
             unlink($fileToRemove);
         }
 
@@ -287,12 +301,12 @@ class AttachImages extends Behavior
     {
         if ($this->createAliasMethod) {
             $string = $this->owner->{$this->createAliasMethod}();
+            
             if (!is_string($string)) {
                 throw new \Exception("Image's url must be string!");
             } else {
                 return $string;
             }
-
         } else {
             return substr(md5(microtime()), 0, 10);
         }
@@ -322,16 +336,16 @@ class AttachImages extends Behavior
 
         if ($userImages && $this->doResetImages) {
             foreach ($userImages as $file) {
-                if(in_array(strtolower($file->extension), $this->allowExtensions)) {
+                if (in_array(strtolower($file->extension), $this->allowExtensions)) {
 
-                    if (!file_exists($this->uploadsPath)){
+                    if (!file_exists($this->uploadsPath)) {
                         mkdir($this->uploadsPath, 0777, true);
                     }
                     
                     $file->saveAs("{$this->uploadsPath}/{$file->baseName}.{$file->extension}");
 
-                    if($this->owner->getGalleryMode() == 'single') {
-                        foreach($this->owner->getImages() as $image) {
+                    if ($this->owner->getGalleryMode() == 'single') {
+                        foreach ($this->owner->getImages() as $image) {
                             $image->delete();
                         }
                     }

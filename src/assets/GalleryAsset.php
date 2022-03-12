@@ -7,6 +7,7 @@ class GalleryAsset extends AssetBundle
 {
     public $depends = [
         'yii\web\JqueryAsset',
+        'yii\jui\JuiAsset',
     ];
     
     public $js = [

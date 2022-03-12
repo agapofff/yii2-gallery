@@ -4,6 +4,7 @@ namespace dvizh\gallery\controllers;
 use yii;
 use yii\web\Controller;
 use dvizh\gallery\ModuleTrait;
+use yii\web\HttpException;
 
 class ImagesController extends Controller
 {
@@ -23,8 +24,8 @@ class ImagesController extends Controller
     {
         $dotParts = explode('.', $dirtyAlias);
         
-        if(!isset($dotParts[1])){
-            throw new yii\web\HttpException(404, 'Image must have extension');
+        if (!isset($dotParts[1])) {
+            throw new HttpException(404, 'Image must have an extension');
         }
         
         $dirtyAlias = $dotParts[0];
@@ -33,15 +34,15 @@ class ImagesController extends Controller
         $alias = isset(explode('_', $dirtyAlias)[0]) ? explode('_', $dirtyAlias)[0] : false;
         $image = $this->getModule()->getImage($item, $alias);
 
-        if($image->getExtension() != $dotParts[1]){
-            throw new yii\web\HttpException(404, 'Image not found (extenstion)');
+        if ($image->getExtension() != $dotParts[1]) {
+            throw new HttpException(404, 'Image not found (extenstion)');
         }
 
-        if($image){
+        if ($image) {
             header('Content-Type: image/jpg');
             echo $image->getContent($size);
-        }else{
-            throw new \yii\web\HttpException(404, 'There is no images');
+        } else {
+            throw new HttpException(404, 'There is no images');
         }
     }
 }

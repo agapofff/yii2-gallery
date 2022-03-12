@@ -1,19 +1,68 @@
 <?php
+
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use kartik\switchinput\SwitchInput;
 
 ?>
 
+<div class="text-center">
+    <?= Html::img(Yii::$app->urlManager->hostInfo . '/images/store/' . $model->filePath, [
+        'class' => 'img-thumbnail'
+    ]) ?>
+</div>
+<br>
 
-<?php $form = ActiveForm::begin( ['action' => ['/gallery/default/write', 'id' => $model->id], 'options' => ['id' => 'noctua-gallery-form']]); ?>
+<?php 
+    $form = ActiveForm::begin([
+        'action' => [
+            '/gallery/default/write',
+            'id' => $model->id
+        ],
+        'options' => [
+            'id' => 'noctua-gallery-form'
+        ]
+    ]);
+?>
 
-    <?= $form->field($model, 'title')->textInput(['maxlength' => 255]) ?>
+    <?= $form
+            ->field($model, 'title')
+            ->textInput([
+                'maxlength' => 255
+            ])
+    ?>
 
-    <?= $form->field($model, 'alt')->textInput(['maxlength' => 255]) ?>
+    <?= $form
+            ->field($model, 'alt')
+            ->textInput([
+                'maxlength' => 255
+            ])
+    ?>
 
-    <?= $form->field($model, 'description')->textarea(['rows' => 5]) ?>
+    <?= $form
+            ->field($model, 'description')
+            ->textInput([
+                'maxlength' => 255
+            ])
+    ?>
 
-    <?= $form->field($model, 'sort')->textInput() ?>
+    <?= $form
+            ->field($model, 'url')
+            ->textInput([
+                'maxlength' => 255
+            ])
+    ?>
+    
+    <?= $form
+            ->field($model, 'newPage')
+            ->checkbox();
+    ?>
+
+    <?= $form
+            ->field($model, 'sort')
+            ->hiddenInput()
+            ->label(false)
+    ?>
 
     <?= Html::hiddenInput('model', $post['model']) ?>
 
@@ -21,8 +70,11 @@ use yii\widgets\ActiveForm;
 
     <?= Html::hiddenInput('image', $post['image']) ?>
 
-    <div class="buttonSet text-right button-container">
-        <?= Html::submitButton(yii::t('gallery', 'Send'), ['class' => 'btn btn-success']) ?>
+    <br>
+    <div class="text-center">
+        <?= Html::submitButton(Yii::t('gallery', 'Save'), [
+            'class' => 'btn btn-primary'
+        ]) ?>
     </div>
 
 <?php ActiveForm::end(); ?>
