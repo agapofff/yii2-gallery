@@ -2,10 +2,10 @@ Yii2-gallery
 ==========
 
 This extension allows you to:
-• attach images to any model
-• fill titles and alt attributes of those images
-• change images order by simple drag-n-drop
-• wrap every image to it's own link
+* attach images to any model
+* fill titles and alt attributes of those images
+* change images order by simple drag-n-drop
+* wrap every image to it's own link
 
 Installation
 ---------------------------------
@@ -36,7 +36,7 @@ Use migration
 php yii migrate/up --migrationPath=@vendor/agapofff/yii2-gallery/src/migrations
 ```
 
-Using
+Settings
 ---------------------------------
 
 Add to config file
