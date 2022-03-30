@@ -1,120 +1,125 @@
 Yii2-gallery
 ==========
-Это модуль был создан, чтобы дать возможность быстро загружать в админке картинки, добавлять титульник, описание, альтернативный текст, а также задать положение (чем выше значение тем выше в списке будет изображение).
 
-Установка
+This extension allows you to:
+• attach images to any model
+• fill titles and alt attributes of those images
+• change images order by simple drag-n-drop
+• wrap every image to it's own link
+
+Installation
 ---------------------------------
-Выполнить команду
+
+### With [composer](http://getcomposer.org/download/)
+
+Run 
 
 ```
-php composer require dvizh/yii2-gallery "@dev"
+composer require agapofff/yii2-gallery "*"
 ```
 
-Или добавить в composer.json
+or add
 
 ```
-"dvizh/yii2-gallery": "@dev",
+"agapofff/yii2-gallery": "*",
 ```
 
-И выполнить
+to composer.json and run
 
 ```
 php composer update
 ```
 
-Миграция
+Migration
 
 ```
-php yii migrate/up --migrationPath=@vendor/dvizh/yii2-gallery/src/migrations
+php yii migrate/up --migrationPath=@vendor/agapofff/yii2-gallery/src/migrations
 ```
 
-Подключение и настройка
+Using
 ---------------------------------
-В конфигурационный файл приложения добавить модуль gallery
+
+Add to config file
 ```php
     'modules' => [
+        //...
         'gallery' => [
-            'class' => 'dvizh\gallery\Module',
+            'class' => 'agapofff\gallery\Module',
             'imagesStorePath' => dirname(dirname(__DIR__)).'/frontend/web/images/store', //path to origin images
             'imagesCachePath' => dirname(dirname(__DIR__)).'/frontend/web/images/cache', //path to resized copies
-            'graphicsLibrary' => 'GD',
-            'placeHolderPath' => '@webroot/images/placeHolder.png',
-            'adminRoles' => ['administrator', 'admin', 'superadmin'],
+            'graphicsLibrary' => 'GD', // or Imagick
+            'placeHolderPath' => '@webroot/images/placeHolder.png', // path to placeholder image
+            'adminRoles' => ['admin', 'manager'], // use '@' to allow authorized users attach images on frontend
         ],
         //...
     ]
 ```
 
-К модели, к которой необходимо аттачить загружаемые картинки, добавляем поведение:
+Add behaviour to the model to which you want to attach images
 
 ```php
     function behaviors()
     {
         return [
             'images' => [
-                'class' => 'dvizh\gallery\behaviors\AttachImages',
-                'mode' => 'gallery',
-                'quality' => 60,
-                'galleryId' => 'picture'
+                'class' => 'agapofff\gallery\behaviors\AttachImages',
+                'mode' => 'gallery', // or 'single' - one image
+                'quality' => 60, // percentage of image quality compression
+                'galleryId' => 'gallery' // use this unique options for resolving conflicts the same class names
             ],
         ];
     }
 ```
 
-*mode - тип загрузки. gallery - массовая загрузка, single - одиночное поле, если вам необходимо сжатие то установите quality (0 - 100) где  0 - максимальное сжатие, 100 - минимальное сжатие. galleryId - идентификатор галереи, если у вас возникает конфликт при одинаковых имён класса
-
-Использование
----------------------------------
-Использовать можно также, как напрямую:
+Add ```enctype="multipart/form-data"``` to you model form
 
 ```php
-$images = $model->getImages();
-foreach($images as $img) {
-    //retun url to full image
-    echo $img->getUrl();
-
-    //return url to proportionally resized image by width
-    echo $img->getUrl('300x');
-
-    //return url to proportionally resized image by height
-    echo $img->getUrl('x300');
-
-    //return url to resized and cropped (center) image by width and height
-    echo $img->getUrl('200x300');
-
-    //return alt text to image
-    $img->alt
-
-    //return title to image
-    $img->title
-    
-    //return description image
-    $img->description
-}
+    $form = ActiveForm::begin([
+        'options' => [
+            'enctype' => 'multipart/form-data'
+        ]
+    ]);
 ```
 
-Виджеты
----------------------------------
-Загрузка картинок осуществляется через виджет. Добавьте в _form.php внутри формы CRUDа вашей модели.
-Виджету передаются следующие параметры:
-model => Модель к которой будут привязаны картинки, по умолчанию null;
-previewSize => размер превью загруженных изображений, по умолчанию '140x140';
-label => метка для виджета по умолчанию 'Изображение';
-fileInputPluginLoading => нужно ли показывать индикатор загрузки прогресса в месте ввода, по умолчанию true;
-fileInputPluginOptions => массив свойств виджета [kartik/file/fileInput](http://demos.krajee.com/widget-details/fileinput), по умолчанию [];
-
-
-Не забудьте
-```php<?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>```
-для формы.
+Add the widget for uploading images in your form
 
 ```php
-<?=\dvizh\gallery\widgets\Gallery::widget(
-    [
-        'model' => $model,
-        'previewSize' => '50x50',
-        'fileInputPluginLoading' => true,
-        'fileInputPluginOptions' => []
-    ]
-); ?>
+    <?= \agapofff\gallery\widgets\Gallery::widget([
+            'model' => $model,
+            'previewSize' => '140x140', // uploaded images preview size
+            'containerClass' => 'row', // gallery container class
+            'elementClass' => 'col-xs-12 col-md-6', // image container class
+            'imageClass' => 'img-thumbnail img-fluid', // image class
+            'deleteButtonText' => 'Delete', // delete button content. HTML allowed
+            'deleteButtonClass' => 'btn btn-danger', // delete button class
+            'deleteConfirmText' => 'Delete image?', // delete confirmation alert message
+            'editButtonText' => 'Change', // edit button content. Html allowed
+            'editButtonClass' => 'btn btn-info', // edit button class
+            'hint' => null, // hint message under the gallery
+            'hintClass' => null, // hint message class
+            'fileInputPluginLoading' => true, // show uploading progress indicator
+            'fileInputPluginOptions' => [], // settings for [kartik/file/fileInput](http://demos.krajee.com/widget-details/fileinput)
+        ]);
+    ?>
 ```
+
+Get attached images params
+
+```php
+    $images = $model->getImages();
+    foreach ($images as $image) {
+        echo $image->getUrl(); // url to full image
+        echo $image->getUrl('300x'); // url to proportionally resized image by width
+        echo $image->getUrl('x300'); // url to proportionally resized image by height
+        echo $image->getUrl('200x300'); // url to resized and cropped (centered) image by width and height
+        echo $image->alt; // image alt attribute
+        echo $image->title; // image title
+        echo $image->description; // image description
+        echo $image->description; // image description
+        echo $image->url; // link for image
+        echo $image->newPage; // open link in new page
+    }
+```
+
+
+based on [dvizh/yii2-gallery](https://github.com/dvizh/yii2-gallery)

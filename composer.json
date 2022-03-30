@@ -1,7 +1,12 @@
 {
     "name": "agapofff/yii2-gallery",
     "description": "Alows to attach images to any model",
-    "keywords": ["yii2", "yii2", "application", "images", "yii2-images", "agapofff"],
+    "keywords": [
+        "yii2", 
+        "images", 
+        "yii2-images", 
+        "agapofff",
+    ],
     "homepage": "https://github.com/agapofff/yii2-gallery",
     "type": "yii2-extension",
     "license": "Apache-2.0",
