@@ -1,9 +1,9 @@
 <?php
-namespace dvizh\gallery\controllers;
+namespace agapofff\gallery\controllers;
 
 use yii;
 use yii\web\Controller;
-use dvizh\gallery\ModuleTrait;
+use agapofff\gallery\ModuleTrait;
 use yii\web\HttpException;
 
 class ImagesController extends Controller
@@ -12,12 +12,7 @@ class ImagesController extends Controller
 
     public function actionIndex()
     {
-        echo "Hello, man. It's ok, dont worry.";
-    }
-
-    public function actionTestTest()
-    {
-        echo "Hello, man. It's ok, dont worry.";
+        return;
     }
 
     public function actionImageByItemAndAlias($item = '', $dirtyAlias)

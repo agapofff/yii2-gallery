@@ -1,9 +1,9 @@
 <?php
-namespace dvizh\gallery;
+namespace agapofff\gallery;
 
 use Yii;
-use dvizh\gallery\models\PlaceHolder;
-use dvizh\gallery\models\Image;
+use agapofff\gallery\models\PlaceHolder;
+use agapofff\gallery\models\Image;
 use yii\i18n\PhpMessageSource;
 
 class Module extends \yii\base\Module
@@ -14,7 +14,10 @@ class Module extends \yii\base\Module
     public $placeHolderPath;
     public $waterMark = false;
     public $waterMarkPosition = false;
-    public $adminRoles = ['admin', 'superadmin'];
+    public $adminRoles = [
+        'admin', 
+        'superadmin',
+    ];
 
     public function getImage($item, $dirtyAlias)
     {
@@ -55,7 +58,7 @@ class Module extends \yii\base\Module
     public function getModelSubDir($model)
     {
         $modelName = $this->getShortClass($model);
-        $modelDir = $modelName . 's/' . $modelName . $model->id;
+        $modelDir = $modelName . '/' . $modelName . $model->id;
 
         return $modelDir;
     }
@@ -101,7 +104,7 @@ class Module extends \yii\base\Module
                 'height' => intval($sizeParts[1])
             ];
         } else {
-            throw new \Exception('Something bad with size, sorry!');
+            throw new Exception('Something bad with size, sorry!');
         }
 
         return $size;
@@ -125,7 +128,10 @@ class Module extends \yii\base\Module
             $size = null;
         }
 
-        return ['alias' => $alias, 'size' => $size];
+        return [
+            'alias' => $alias,
+            'size' => $size
+        ];
     }
 
 
@@ -134,17 +140,6 @@ class Module extends \yii\base\Module
         parent::init();
         
         $app = Yii::$app;
-        
-        // if (
-            // !isset($app->i18n->translations['gallery'])
-            // && !isset($app->i18n->translations['gallery*'])
-        // ) {
-            // $app->i18n->translations['gallery'] = [
-                // 'class' => 'yii\i18n\PhpMessageSource',
-                // 'basePath' => __DIR__.'/messages',
-                // 'forceTranslation' => true
-            // ];
-        // }
         
         if (!isset($app->get('i18n')->translations['gallery*'])) {
             $app->get('i18n')->translations['gallery*'] = [
@@ -160,7 +155,7 @@ class Module extends \yii\base\Module
             || $this->imagesStorePath == '@app'
             || $this->imagesCachePath == '@app'
         ) {
-            throw new \Exception('Setup imagesStorePath and imagesCachePath images module properties!!!');
+            throw new Exception('Setup imagesStorePath and imagesCachePath images module properties');
         }
     }
 

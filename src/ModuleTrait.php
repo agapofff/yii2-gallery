@@ -1,5 +1,5 @@
 <?php
-namespace dvizh\gallery;
+namespace agapofff\gallery;
 
 use Yii;
 use yii\base\Exception;
@@ -15,7 +15,7 @@ trait ModuleTrait
         }
 
         if (!$this->_module) {
-            throw new Exception("\n\n\n\n\nGallery module not found, may be you didn't add it to your config?\n\n\n\n");
+            throw new Exception('Gallery module not found');
         }
 
         return $this->_module;

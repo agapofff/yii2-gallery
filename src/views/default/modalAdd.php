@@ -1,9 +1,6 @@
 <?php
-
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use kartik\switchinput\SwitchInput;
-
 ?>
 
 <div class="text-center">
@@ -20,7 +17,7 @@ use kartik\switchinput\SwitchInput;
             'id' => $model->id
         ],
         'options' => [
-            'id' => 'noctua-gallery-form'
+            'id' => 'yii2gallery-form'
         ]
     ]);
 ?>

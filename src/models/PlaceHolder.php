@@ -1,5 +1,5 @@
 <?php
-namespace dvizh\gallery\models;
+namespace agapofff\gallery\models;
 
 use Yii;
 use yii\base\Exception;
@@ -21,7 +21,7 @@ class PlaceHolder extends Image
         $url = Yii::getAlias($this->getModule()->placeHolderPath);
         
         if (!$url) {
-            throw new \Exception(Yii::t('app', 'PlaceHolder image must have path setting'));
+            throw new Exception(Yii::t('app', 'PlaceHolder image must have path setting'));
         }
         
         return $url;
@@ -34,7 +34,7 @@ class PlaceHolder extends Image
     
     public function setMain($isMain = true)
     {
-        throw new \Exception(Yii::t('app', 'You must not set placeHolder as main image'));
+        throw new Exception(Yii::t('app', 'You must not set placeHolder as main image'));
     }
 }
 

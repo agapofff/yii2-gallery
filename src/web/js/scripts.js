@@ -4,19 +4,19 @@ if (typeof yii2gallery == 'undefined' || !yii2gallery) {
 
 yii2gallery = {
     init: function () {
-        $('.dvizh-gallery-item a.delete').on('click', this.deleteProductImage);
-        $('.dvizh-gallery-item a.write').on('click', this.callModal);
-        $('.dvizh-gallery img').on('click', this.setMainProductImage);
-        $('.noctua-gallery-form').on('submit', this.writeProductImage);
+        $('.yii2gallery-item a.delete').on('click', this.deleteProductImage);
+        $('.yii2gallery-item a.write').on('click', this.callModal);
+        $('.yii2gallery img').on('click', this.setMainProductImage);
+        $('.yii2gallery-form').on('submit', this.writeProductImage);
     },
     
     setMainProductImage: function () {
         var url = $(this).data('action'),
-            data = $(this).parents('.dvizh-gallery-item').data();
+            data = $(this).parents('.yii2gallery-item').data();
             
         yii2gallery._sendData(url, data);
-        $('.dvizh-gallery-item').removeClass('main');
-        $(this).parents('.dvizh-gallery-item').addClass('main');
+        $('.yii2gallery-item').removeClass('main');
+        $(this).parents('.yii2gallery-item').addClass('main');
         return false;
     },
 
@@ -28,7 +28,7 @@ yii2gallery = {
             data = form.serialize();
             
         $.when(yii2gallery._sendData(url, data)).then(function () {
-            $('#noctua-gallery-modal').modal('hide');
+            $('#yii2gallery-modal').modal('hide');
         });
     },
 
@@ -36,35 +36,35 @@ yii2gallery = {
         event.preventDefault();
 
         var url = $(this).data('action'),
-            data = $(this).parents('.dvizh-gallery-item').data();
+            data = $(this).parents('.yii2gallery-item').data();
             
         delete data.sortableItem;
         
-        $('.noctua-gallery-form').load(url, data, function () {
-            $('#noctua-gallery-modal').modal('show');
+        $('.yii2gallery-form').load(url, data, function () {
+            $('#yii2gallery-modal').modal('show');
         });
     },
     
     deleteProductImage: function () {
         var url = $(this).data('action'),
-            data = $(this).parents('.dvizh-gallery-item').data();
+            data = $(this).parents('.yii2gallery-item').data();
             
         if (confirm($(this).data('confirm'))) {
             yii2gallery._sendData(url, data);
-            $(this).parents('.dvizh-gallery-item').remove();
+            $(this).parents('.yii2gallery-item').remove();
         }
         
         return false;
     },
     
     setSort: function(event, ui){
-        $('.dvizh-gallery').each(function(){
+        $('.yii2gallery').each(function(){
             var url = $(this).data('action'),
                 data = {
                     items: []
                 };
                 
-            $(this).find('.dvizh-gallery-item').each(function(){
+            $(this).find('.yii2gallery-item').each(function(){
                 data.items.push(parseFloat($(this).attr('data-image')));
             });
             

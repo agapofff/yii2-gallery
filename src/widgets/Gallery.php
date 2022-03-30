@@ -1,5 +1,5 @@
 <?php
-namespace dvizh\gallery\widgets;
+namespace agapofff\gallery\widgets;
 
 use yii;
 use yii\helpers\Html;
@@ -7,7 +7,7 @@ use yii\helpers\Url;
 use yii\web\JsExpression;
 use yii\jui\Sortable;
 use kartik\file\FileInput;
-use dvizh\gallery\assets\GalleryAsset;
+use agapofff\gallery\assets\GalleryAsset;
 
 class Gallery extends \yii\base\Widget
 {
@@ -74,7 +74,7 @@ class Gallery extends \yii\base\Widget
                     'items' => $items,
                     'options' => [
                         'tag' => 'div',
-                        'class' => 'dvizh-gallery ' . $this->containerClass,
+                        'class' => 'yii2gallery ' . $this->containerClass,
                         'data' => [
                             'action' => Url::toRoute(['/gallery/default/sort'])
                         ]
@@ -99,20 +99,20 @@ class Gallery extends \yii\base\Widget
 
     private function row($image)
     {
-        if ($image instanceof \dvizh\gallery\models\PlaceHolder) {
+        if ($image instanceof \agapofff\gallery\models\PlaceHolder) {
             return '';
         }
 
-        $class = 'dvizh-gallery-row';
+        $class = 'yii2gallery-row';
 
         if ($image->isMain) {
             $class .= ' main';
         }
 
-        $liParams = $this->getParams($image->id);
-        $liParams['class'] .= $class;
+        $colParams = $this->getParams($image->id);
+        $colParams['class'] .= $class;
 
-        return Html::tag('div', $this->getImagePreview($image), $liParams);
+        return Html::tag('div', $this->getImagePreview($image), $colParams);
     }
 
     private function getFileInput()
@@ -133,7 +133,7 @@ class Gallery extends \yii\base\Widget
         $model = $this->model;
 
         return  [
-            'class' => 'dvizh-gallery-item ',
+            'class' => 'yii2gallery-item ',
             'data-model' => $model::className(),
             'data-id' => $model->id,
             'data-image' => $id

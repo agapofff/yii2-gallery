@@ -1,5 +1,5 @@
 <?php
-namespace dvizh\gallery\assets;
+namespace agapofff\gallery\assets;
 
 use yii\web\AssetBundle;
 
@@ -13,14 +13,10 @@ class GalleryAsset extends AssetBundle
     public $js = [
         'js/scripts.js',
     ];
-
-    public $css = [
-        'css/styles.css',
-    ];
     
     public function init()
     {
-        $this->sourcePath = dirname(__DIR__).'/web';
+        $this->sourcePath = dirname(__DIR__) . '/web';
         parent::init();
     }
 }

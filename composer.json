@@ -1,17 +1,17 @@
 {
-    "name": "dvizh/yii2-gallery",
-    "description": "Модуль позволяет загружать виджетом картинки",
-    "keywords": ["yii2", "yii2", "application", "images", "yii2-images", "dvizh"],
-    "homepage": "https://github.com/dvizh/yii2-gallery",
+    "name": "agapofff/yii2-gallery",
+    "description": "Alows to attach images to any model",
+    "keywords": ["yii2", "yii2", "application", "images", "yii2-images", "agapofff"],
+    "homepage": "https://github.com/agapofff/yii2-gallery",
     "type": "yii2-extension",
     "license": "Apache-2.0",
     "support": {
-        "source": "https://github.com/dvizh/yii2-gallery"
+        "source": "https://github.com/agapofff/yii2-gallery"
     },
     "authors": [
         {
-            "name": "Ilya Pistol",
-            "email": "admin@nethammer.ru"
+            "name": "Dmitriy Agapofff",
+            "email": "agapofff@gmail.com"
         }
     ],
     "minimum-stability": "dev",
@@ -28,7 +28,7 @@
     },
     "autoload": {
         "psr-4": {
-            "dvizh\\gallery\\": "src\\"
+            "agapofff\\gallery\\": "src\\"
         }
     }
 }

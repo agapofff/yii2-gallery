@@ -1,11 +1,11 @@
 <?php
-namespace dvizh\gallery\models;
+namespace agapofff\gallery\models;
 
 use Yii;
 use yii\base\Exception;
 use yii\helpers\Url;
 use yii\helpers\BaseFileHelper;
-use dvizh\gallery\ModuleTrait;
+use agapofff\gallery\ModuleTrait;
 use abeautifulsite\SimpleImage;
 
 class Image extends \yii\db\ActiveRecord
@@ -269,7 +269,7 @@ class Image extends \yii\db\ActiveRecord
 
     protected function getSubDur()
     {
-        return $this->modelName . 's/' . $this->modelName . $this->itemId;
+        return $this->modelName . '/' . $this->modelName . $this->itemId;
     }    
     
 	public function validateUrl($attribute)

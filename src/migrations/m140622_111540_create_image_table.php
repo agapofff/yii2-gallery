@@ -1,5 +1,4 @@
 <?php
-
 use yii\db\Schema;
 
 class m140622_111540_create_image_table extends \yii\db\Migration
@@ -25,8 +24,6 @@ class m140622_111540_create_image_table extends \yii\db\Migration
 
     public function down()
     {
-        echo "m140622_111540_create_image_table cannot be reverted.\n";
-
-        return false;
+        $this->dropTable('{{%images}}');
     }
 }

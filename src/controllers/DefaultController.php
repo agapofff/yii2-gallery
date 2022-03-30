@@ -1,12 +1,13 @@
 <?php
-namespace dvizh\gallery\controllers;
+namespace agapofff\gallery\controllers;
 
 use yii;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use yii\helpers\Json;
-use dvizh\gallery\models\Image;
+use agapofff\gallery\models\Image;
+use yii\web\NotFoundHttpException;
 
 class DefaultController extends Controller
 {
@@ -102,7 +103,7 @@ class DefaultController extends Controller
     protected function findImage($id)
     {
         if (!$model = Image::findOne($id)) {
-            throw new \yii\web\NotFoundHttpException('Image not found');
+            throw new NotFoundHttpException('Image not found');
         }
         
         return $model;

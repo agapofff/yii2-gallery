@@ -1,15 +1,16 @@
 <?php
-namespace dvizh\gallery\behaviors;
+namespace agapofff\gallery\behaviors;
 
 use yii;
 use yii\base\Behavior;
 use yii\db\ActiveRecord;
 use yii\web\UploadedFile;
-use dvizh\gallery\models;
+use agapofff\gallery\models;
 use yii\helpers\BaseFileHelper;
-use dvizh\gallery\ModuleTrait;
-use dvizh\gallery\models\Image;
-use dvizh\gallery\models\PlaceHolder;
+use agapofff\gallery\ModuleTrait;
+use agapofff\gallery\models\Image;
+use agapofff\gallery\models\PlaceHolder;
+use yii\helpers\BaseArrayHelper;
 
 class AttachImages extends Behavior
 {
@@ -20,7 +21,12 @@ class AttachImages extends Behavior
     public $uploadsPath = '';
     public $mode = 'gallery';
     public $webUploadsPath = '/uploads';
-    public $allowExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+    public $allowExtensions = [
+        'jpg',
+        'jpeg',
+        'png',
+        'gif',
+    ];
     public $inputName = 'galleryFiles';
     private $doResetImages = true;
     public $quality = false;
@@ -83,12 +89,12 @@ class AttachImages extends Behavior
     {
         if (!preg_match('#http#', $absolutePath)) {
             if (!file_exists($absolutePath)) {
-                throw new \Exception('File not exist! :'.$absolutePath);
+                throw new Exception('File not found: ' . $absolutePath);
             }
         }
         
         if (!$this->owner->id) {
-            throw new \Exception('Owner must have id when you attach image!');
+            throw new Exception('Owner must have id when you attach image');
         }
 
         $pictureFileName =
@@ -115,7 +121,7 @@ class AttachImages extends Behavior
         }
         
         if (!file_exists($absolutePath)) {
-            throw new \Exception('Cant copy file! ' . $absolutePath . ' to ' . $newAbsolutePath);
+            throw new Exception('Cant copy file ' . $absolutePath . ' to ' . $newAbsolutePath);
         }
 
         if ($this->modelClass === null) {
@@ -138,14 +144,14 @@ class AttachImages extends Behavior
             $ar = array_shift($image->getErrors());
 
             unlink($newAbsolutePath);
-            throw new \Exception(array_shift($ar));
+            throw new Exception(array_shift($ar));
         }
         
         $img = $this->owner->getImage();
 
         if (
             is_object($img) 
-            && get_class($img) == 'dvizh\gallery\models\PlaceHolder' 
+            && get_class($img) == 'agapofff\gallery\models\PlaceHolder' 
             || $img == null 
             || $isMain
         ) {
@@ -158,7 +164,7 @@ class AttachImages extends Behavior
     public function setMainImage($img)
     {
         if ($this->owner->id != $img->itemId) {
-            throw new \Exception('Image must belong to this model');
+            throw new Exception('Image must belong to this model');
         }
 
         $counter = 1;
@@ -291,7 +297,7 @@ class AttachImages extends Behavior
         ];
 
         if ($additionWhere) {
-            $base = \yii\helpers\BaseArrayHelper::merge($base, $additionWhere);
+            $base = BaseArrayHelper::merge($base, $additionWhere);
         }
 
         return $base;
@@ -303,7 +309,7 @@ class AttachImages extends Behavior
             $string = $this->owner->{$this->createAliasMethod}();
             
             if (!is_string($string)) {
-                throw new \Exception("Image's url must be string!");
+                throw new Exception('Url must be string');
             } else {
                 return $string;
             }
