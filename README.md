@@ -30,7 +30,7 @@ to composer.json and run
 php composer update
 ```
 
-Migration
+Use migration
 
 ```
 php yii migrate/up --migrationPath=@vendor/agapofff/yii2-gallery/src/migrations
@@ -98,12 +98,12 @@ Add the widget for uploading images in your form
             'hint' => null, // hint message under the gallery
             'hintClass' => null, // hint message class
             'fileInputPluginLoading' => true, // show uploading progress indicator
-            'fileInputPluginOptions' => [], // settings for [kartik/file/fileInput](http://demos.krajee.com/widget-details/fileinput)
+            'fileInputPluginOptions' => [], // settings for Kartik Fileinput plugin http://demos.krajee.com/widget-details/fileinput
         ]);
     ?>
 ```
 
-Get attached images params
+Getting attached images params
 
 ```php
     $images = $model->getImages();
