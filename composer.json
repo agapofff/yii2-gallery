@@ -1,11 +1,11 @@
 {
     "name": "agapofff/yii2-gallery",
-    "description": "Alows to attach images to any model",
+    "description": "Allows to attach images to any model",
     "keywords": [
         "yii2", 
         "images", 
         "yii2-images", 
-        "agapofff",
+        "agapofff"
     ],
     "homepage": "https://github.com/agapofff/yii2-gallery",
     "type": "yii2-extension",
