@@ -2,14 +2,16 @@
 namespace agapofff\gallery\widgets;
 
 use yii;
+use yii\base\Widget;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\web\JsExpression;
 use yii\jui\Sortable;
 use kartik\file\FileInput;
 use agapofff\gallery\assets\GalleryAsset;
+use agapofff\gallery\models\PlaceHolder;
 
-class Gallery extends \yii\base\Widget
+class Gallery extends Widget
 {
     public $model = null;
     public $previewSize = '140x140';
@@ -52,6 +54,10 @@ class Gallery extends \yii\base\Widget
         
         $gallery = '';
         
+        $hint = $this->hint ? Html::tag('div', $this->hint, [
+            'class' => $this->hintClass
+        ]) : null;
+        
         if ($model->getGalleryMode() == 'single') {
             if ($model->hasImage()) {
                 $image = $this->model->getImage();
@@ -59,7 +65,9 @@ class Gallery extends \yii\base\Widget
                 $params = $this->getParams($image->id);
             }
 
-            return $label . Html::tag('div', $img, $params) . $this->getFileInput();
+            return $label . Html::tag('div', Html::tag('div', $img, $params), [
+                'class' => 'yii2gallery ' . $this->containerClass
+            ]) . $this->getFileInput() . $hint;
         }
 
         if ($this->model->hasImage()) {
@@ -81,7 +89,7 @@ class Gallery extends \yii\base\Widget
                     ],
                     'itemOptions' => [
                         'tag' => 'div',
-                        'class' => $this->elementClass,
+                        // 'class' => $this->elementClass,
                     ],
                     'clientOptions' => [
                         'cursor' => 'move',
@@ -90,27 +98,21 @@ class Gallery extends \yii\base\Widget
                 ]);
         }
         
-        $hint = $this->hint ? Html::tag('div', $this->hint, [
-            'class' => $this->hintClass
-        ]) : null;
-
         return Html::tag('div', $label . $gallery . $this->getFileInput() . $hint);
     }
 
     private function row($image)
     {
-        if ($image instanceof \agapofff\gallery\models\PlaceHolder) {
+        if ($image instanceof PlaceHolder) {
             return '';
         }
-
-        $class = 'yii2gallery-row';
 
         if ($image->isMain) {
             $class .= ' main';
         }
 
         $colParams = $this->getParams($image->id);
-        $colParams['class'] .= $class;
+        $colParams['class'] .= ' ' . $class;
 
         return Html::tag('div', $this->getImagePreview($image), $colParams);
     }
@@ -133,7 +135,7 @@ class Gallery extends \yii\base\Widget
         $model = $this->model;
 
         return  [
-            'class' => 'yii2gallery-item ',
+            'class' => 'yii2gallery-item ' . $this->elementClass,
             'data-model' => $model::className(),
             'data-id' => $model->id,
             'data-image' => $id
