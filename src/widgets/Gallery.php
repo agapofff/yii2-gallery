@@ -146,7 +146,7 @@ class Gallery extends Widget
     {
         $size = (explode('x', $this->previewSize));
 
-        $delete = Html::a($this->deleteButtonText, '#', [
+        $delete = Html::button($this->deleteButtonText, [
             'data-action' => Url::toRoute([
                 '/gallery/default/delete',
                 'id' => $image->id
@@ -155,7 +155,7 @@ class Gallery extends Widget
             'class' => 'delete ' . $this->deleteButtonClass,
         ]);
         
-        $write = Html::a($this->editButtonText, '#', [
+        $write = Html::button($this->editButtonText, [
             'data-action' => Url::toRoute([
                 '/gallery/default/modal',
                 'id' => $image->id
