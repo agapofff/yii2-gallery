@@ -4,8 +4,8 @@ if (typeof yii2gallery == 'undefined' || !yii2gallery) {
 
 yii2gallery = {
     init: function () {
-        $('.yii2gallery-item a.delete').on('click', this.deleteProductImage);
-        $('.yii2gallery-item a.write').on('click', this.callModal);
+        $('.yii2gallery-item .delete').on('click', this.deleteProductImage);
+        $('.yii2gallery-item .write').on('click', this.callModal);
         $('.yii2gallery img').on('click', this.setMainProductImage);
         $('.yii2gallery-form').on('submit', this.writeProductImage);
     },
