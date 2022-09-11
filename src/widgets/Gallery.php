@@ -62,7 +62,7 @@ class Gallery extends Widget
             if ($model->hasImage()) {
                 $image = $this->model->getImage();
                 $img = $this->getImagePreview($image);
-                $params = $this->getParams($image->id);
+                $params = $this->getParams($image->id, $this->elementClass);
             }
 
             return $label . Html::tag('div', Html::tag('div', $img, $params), [
@@ -89,10 +89,17 @@ class Gallery extends Widget
                     ],
                     'itemOptions' => [
                         'tag' => 'div',
-                        // 'class' => $this->elementClass,
+                        'class' => $this->elementClass,
                     ],
                     'clientOptions' => [
                         'cursor' => 'move',
+                        'placeholder' => $this->elementClass,
+                        'forcePlaceholderSize' => true,
+                        'start' => new JsExpression("
+                            function(e, ui){
+                                ui.placeholder.html(ui.item.html());
+                            }
+                        "),
                         'update' => new JsExpression('yii2gallery.setSort'),
                     ],
                 ]);
@@ -130,12 +137,12 @@ class Gallery extends Widget
         ]);
     }
 
-    private function getParams($id)
+    private function getParams($id, $class = null)
     {
         $model = $this->model;
 
         return  [
-            'class' => 'yii2gallery-item ' . $this->elementClass,
+            'class' => 'yii2gallery-item' . ($class ? ' ' . $class : ''),
             'data-model' => $model::className(),
             'data-id' => $model->id,
             'data-image' => $id
