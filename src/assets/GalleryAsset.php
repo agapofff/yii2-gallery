@@ -14,6 +14,10 @@ class GalleryAsset extends AssetBundle
         'js/scripts.js',
     ];
     
+    public $css = [
+        'css/style.css',
+    ];
+    
     public function init()
     {
         $this->sourcePath = dirname(__DIR__) . '/web';

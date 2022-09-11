@@ -1,0 +1,30 @@
+.yii2gallery .main img {
+    outline: 1px solid red;
+}
+.yii2gallery.row .ui-sortable-placeholder 
+.yii2gallery-item {
+    position: relative;
+}
+.yii2gallery-item .btn {
+    position: absolute;
+    left: 1em;
+}
+.yii2gallery-item .delete {
+    top: 0.5em;
+}
+.yii2gallery-item .write {
+    bottom: 0.5em;
+}
+.yii2gallery-item img {
+    display: block;
+    width: 100%;
+}
+.yii2gallery.row {
+    margin-left: -0.5em;
+    margin-right: -0.5em;
+}
+.yii2gallery.row div[class*="col-"] {
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    margin-bottom: 1em;
+}
